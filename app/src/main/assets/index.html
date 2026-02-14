@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HRP Portal – Palwal District</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:#0d9488;--teal-dark:#0f766e;--teal-light:#ccfbf1;--teal-xlight:#f0fdfa;
+  --red:#dc2626;--red-light:#fee2e2;--amber:#d97706;--amber-light:#fef3c7;
+  --yellow:#ca8a04;--yellow-light:#fefce8;--blue:#2563eb;--blue-light:#dbeafe;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;--white:#ffffff;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --radius:12px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
+  --shadow-lg:0 10px 15px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:var(--font);background:var(--gray-50);color:var(--gray-800);font-size:15px;line-height:1.5}
+#loginScreen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f766e 0%,#134e4a 60%,#083344 100%);padding:24px}
+.login-logo{width:72px;height:72px;background:rgba(255,255,255,.15);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:36px}
+.login-title{color:white;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
+.login-sub{color:rgba(255,255,255,.65);font-size:13px;text-align:center;margin-bottom:32px;letter-spacing:.03em}
+.login-card{background:white;border-radius:20px;padding:28px 24px;width:100%;max-width:380px;box-shadow:var(--shadow-lg)}
+.login-card label{display:block;font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.login-card input{width:100%;padding:12px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font);font-size:15px;color:var(--gray-800);outline:none;transition:border-color .2s;margin-bottom:16px}
+.login-card input:focus{border-color:var(--teal)}
+.btn-primary{width:100%;padding:13px;background:var(--teal);color:white;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-primary:hover{background:var(--teal-dark)}
+.login-err{color:var(--red);font-size:13px;margin-top:8px;text-align:center;display:none}
+#app{display:none;flex-direction:column;min-height:100vh}
+.topbar{background:var(--teal-dark);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.topbar-title{font-size:15px;font-weight:700;line-height:1.2}
+.topbar-sub{font-size:11px;opacity:.7}
+.topbar-actions{display:flex;gap:8px}
+.icon-btn{background:rgba(255,255,255,.15);border:none;color:white;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.active{display:flex}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat-card{background:white;border-radius:var(--radius-sm);padding:14px 12px;text-align:center;box-shadow:var(--shadow)}
+.stat-val{font-size:22px;font-weight:700;color:var(--teal)}
+.stat-lbl{font-size:11px;color:var(--gray-500);margin-top:2px}
+.action-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.action-card{background:white;border-radius:var(--radius);padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;box-shadow:var(--shadow);border:2px solid transparent;transition:all .2s;text-align:center}
+.action-card:hover,.action-card:active{border-color:var(--teal);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.action-card .icon{font-size:32px}
+.action-card .label{font-size:14px;font-weight:600;color:var(--gray-700)}
+.action-card .sublabel{font-size:12px;color:var(--gray-400)}
+.action-card.new{background:linear-gradient(135deg,var(--teal-xlight),white)}
+.action-card.registered{background:linear-gradient(135deg,#eff6ff,white)}
+.alert-section{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.alert-section h3{font-size:13px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.alert-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--gray-100);cursor:pointer}
+.alert-item:last-child{border-bottom:none}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.alert-dot.red{background:var(--red)}
+.alert-dot.amber{background:var(--amber)}
+.alert-name{font-size:14px;font-weight:600;color:var(--gray-800)}
+.alert-detail{font-size:12px;color:var(--gray-500)}
+.form-container{padding:16px;padding-bottom:90px;overflow-y:auto;flex:1}
+.form-section{background:white;border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden}
+.form-section-header{background:var(--teal);color:white;padding:12px 16px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.form-section-body{padding:16px}
+.form-row{margin-bottom:14px}
+.form-row:last-child{margin-bottom:0}
+.form-label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
+.req{color:var(--red);font-size:14px}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 13px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font);font-size:15px;color:var(--gray-800);outline:none;transition:border-color .2s;background:white}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal);background:var(--teal-xlight)}
+.form-input.error{border-color:var(--red);background:var(--red-light)}
+.form-input[readonly]{background:var(--gray-100);color:var(--gray-600);cursor:default}
+.form-hint{font-size:11px;color:var(--gray-400);margin-top:4px}
+.auto-calc{background:var(--teal-xlight)!important;border-color:var(--teal)!important;color:var(--teal-dark)!important;font-weight:600}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hrp-grid{display:flex;flex-direction:column;gap:6px}
+.hrp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;user-select:none}
+.hrp-item.selected{border-color:var(--teal);background:var(--teal-xlight)}
+.hrp-item.auto-selected{border-color:var(--amber);background:var(--amber-light)}
+.hrp-check{width:20px;height:20px;border:2px solid var(--gray-300);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.hrp-item.selected .hrp-check{background:var(--teal);border-color:var(--teal);color:white}
+.hrp-item.auto-selected .hrp-check{background:var(--amber);border-color:var(--amber);color:white}
+.hrp-label{font-size:14px;color:var(--gray-700);flex:1}
+.hrp-badge{font-size:10px;background:var(--amber-light);color:var(--amber);padding:2px 7px;border-radius:99px;font-weight:600;flex-shrink:0}
+.visit-card{border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);margin-bottom:10px;overflow:hidden}
+.visit-header{background:var(--gray-50);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.visit-title{font-size:13px;font-weight:700;color:var(--gray-700)}
+.visit-date{font-size:12px;color:var(--gray-400)}
+.visit-body{padding:12px 14px;display:none}
+.visit-body.open{display:block}
+.visit-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--gray-100);font-size:13px}
+.visit-row:last-child{border-bottom:none}
+.visit-key{color:var(--gray-500)}
+.visit-val{font-weight:600;color:var(--gray-800)}
+.pog-badge{display:inline-block;padding:4px 12px;border-radius:99px;font-size:13px;font-weight:700}
+.pog-normal{background:var(--teal-light);color:var(--teal-dark)}
+.pog-yellow{background:var(--yellow-light);color:var(--yellow)}
+.pog-red{background:var(--red-light);color:var(--red);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--gray-200);padding:12px 16px;display:flex;gap:10px;z-index:100}
+.btn-save{flex:1;padding:13px;background:var(--teal);color:white;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer}
+.btn-secondary{padding:13px 20px;background:var(--gray-100);color:var(--gray-700);border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer}
+.btn-danger{padding:13px 16px;background:var(--red-light);color:var(--red);border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer}
+.reminder-box{background:var(--amber-light);border:1.5px solid var(--amber);border-radius:var(--radius-sm);padding:10px 13px;margin-top:8px;font-size:13px;color:var(--amber);font-weight:600;display:flex;align-items:center;gap:8px}
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;overflow-y:auto;padding:24px 16px}
+.overlay.open{display:block}
+.overlay-card{background:white;border-radius:var(--radius);max-width:500px;margin:0 auto;box-shadow:var(--shadow-lg)}
+.overlay-header{background:var(--red);color:white;padding:16px 20px;border-radius:var(--radius) var(--radius) 0 0;display:flex;align-items:center;justify-content:space-between}
+.overlay-header h2{font-size:16px;font-weight:700}
+.overlay-body{padding:20px}
+.close-btn{background:none;border:none;color:white;font-size:20px;cursor:pointer}
+.patient-list{padding:16px;padding-bottom:90px;overflow-y:auto;flex:1}
+.patient-card{background:white;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;border-left:4px solid var(--gray-300);transition:all .15s;display:flex;align-items:flex-start;justify-content:space-between}
+.patient-card:hover{box-shadow:var(--shadow-md)}
+.patient-card.yellow{border-left-color:var(--yellow);background:linear-gradient(90deg,var(--yellow-light),white)}
+.patient-card.red{border-left-color:var(--red);background:linear-gradient(90deg,var(--red-light),white)}
+.patient-card.normal{border-left-color:var(--teal)}
+.pc-name{font-size:15px;font-weight:700;color:var(--gray-800)}
+.pc-rch{font-size:11px;color:var(--gray-400);font-family:var(--mono)}
+.pc-details{font-size:13px;color:var(--gray-600);margin-top:4px}
+.pc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600}
+.tag-red{background:var(--red-light);color:var(--red)}
+.tag-amber{background:var(--amber-light);color:var(--amber)}
+.tag-teal{background:var(--teal-light);color:var(--teal-dark)}
+.filter-bar{background:white;padding:12px 16px;display:flex;gap:8px;border-bottom:1px solid var(--gray-200);overflow-x:auto;flex-shrink:0}
+.filter-chip{padding:7px 14px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;border:1.5px solid var(--gray-200);background:white;color:var(--gray-600);transition:all .15s}
+.filter-chip.active{background:var(--teal);border-color:var(--teal);color:white}
+.search-bar{padding:12px 16px;background:white;border-bottom:1px solid var(--gray-200);flex-shrink:0}
+.search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--gray-200);border-radius:99px;font-family:var(--font);font-size:14px;outline:none;background:var(--gray-50)}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:16px;pointer-events:none}
+.nav-tabs{background:white;border-bottom:1px solid var(--gray-200);display:flex;overflow-x:auto;flex-shrink:0}
+.nav-tab{padding:14px 18px;font-size:13px;font-weight:600;color:var(--gray-500);white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.nav-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.bottom-nav{background:white;border-top:1px solid var(--gray-200);display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px;cursor:pointer;transition:color .15s;font-size:10px;font-weight:600;color:var(--gray-400);gap:2px}
+.nav-item .nav-icon{font-size:22px}
+.nav-item.active{color:var(--teal)}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:white;padding:12px 20px;border-radius:99px;font-size:14px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:500}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hb-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--gray-100)}
+.hb-val{font-weight:700;font-size:15px}
+.hb-val.severe{color:var(--red)}
+.hb-val.mild{color:var(--amber)}
+.hb-val.normal{color:var(--teal)}
+.export-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--teal-light);border:none;border-radius:var(--radius-sm);color:var(--teal-dark);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px}
+.form-divider{height:1px;background:var(--gray-100);margin:14px 0}
+.baby-slot{border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
+.baby-slot-title{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:12px}
+.hidden{display:none!important}
+.info-box{background:var(--blue-light);border-radius:var(--radius-sm);padding:10px 13px;font-size:13px;color:var(--blue);margin-bottom:10px}
+.query-sent{color:var(--teal);font-size:13px;margin-top:6px;display:none}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:99px}
+@media(max-width:360px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-logo">🩺</div>
+  <div class="login-title">HRP Tracking Portal</div>
+  <div class="login-sub">PALWAL DISTRICT · HARYANA</div>
+  <div class="login-card">
+    <label>User ID</label>
+    <input type="text" id="loginUser" placeholder="Enter user ID" autocomplete="username">
+    <label>Password</label>
+    <input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password">
+    <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="loginErr">Incorrect user ID or password.</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbarTitle">HRP Portal</div>
+      <div class="topbar-sub">Palwal District · Haryana</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="openQueryModal()" title="Send query">📨</button>
+      <button class="icon-btn" onclick="doLogout()" title="Sign out">⏏</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="homeScreen" class="screen active" style="overflow-y:auto;flex:1;padding-bottom:70px;">
+    <div style="padding:20px 16px 10px;">
+      <div style="font-size:18px;font-weight:700;color:var(--gray-800);">Good day! 👋</div>
+      <div style="font-size:13px;color:var(--gray-500);margin-top:2px;" id="todayDate"></div>
+    </div>
+    <div style="padding:0 16px 12px;"><div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total HRP</div></div>
+      <div class="stat-card"><div class="stat-val" id="statThird" style="color:var(--amber)">0</div><div class="stat-lbl">3rd Trimester</div></div>
+      <div class="stat-card"><div class="stat-val" id="statDeliv" style="color:var(--teal)">0</div><div class="stat-lbl">Delivered</div></div>
+    </div></div>
+    <div style="padding:0 16px 12px;"><div class="action-cards">
+      <div class="action-card new" onclick="goNew()"><div class="icon">➕</div><div class="label">New Beneficiary</div><div class="sublabel">Register new HRP</div></div>
+      <div class="action-card registered" onclick="goRegistered()"><div class="icon">🔍</div><div class="label">Registered</div><div class="sublabel">Update / view records</div></div>
+    </div></div>
+    <div style="padding:0 16px 12px;">
+      <div class="alert-section"><h3>⚠️ Urgent Alerts</h3><div id="alertsList"><div style="font-size:13px;color:var(--gray-400);text-align:center;padding:12px;">No alerts</div></div></div>
+    </div>
+    <div style="padding:0 16px 12px;">
+      <button class="export-btn" onclick="exportToCSV()">📊 Export All Data (CSV / Google Sheets)</button>
+    </div>
+  </div>
+
+  <!-- SEARCH SCREEN -->
+  <div id="searchScreen" class="screen" style="flex-direction:column;">
+    <div style="padding:16px;">
+      <div class="info-box">Enter RCH ID to pull up a patient's full longitudinal record, or search by name below.</div>
+      <div class="search-wrap" style="margin-bottom:10px;">
+        <span class="search-icon">🔢</span>
+        <input type="number" class="search-input" id="rchSearch" placeholder="Enter RCH ID" inputmode="numeric">
+      </div>
+      <button class="btn-primary" style="margin-bottom:12px;" onclick="loadByRCH()">Load by RCH ID</button>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="nameSearch" placeholder="Search by name..." oninput="searchPatients()">
+      </div>
+    </div>
+    <div class="patient-list" style="padding-top:0;" id="searchResults"></div>
+  </div>
+
+  <!-- FORM SCREEN -->
+  <div id="formScreen" class="screen" style="flex-direction:column;">
+    <div class="form-container" id="formContainer">
+
+      <!-- POG Banner -->
+      <div id="pogBanner" class="hidden" style="background:white;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="font-size:11px;color:var(--gray-500);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Period of Gestation</div>
+        <div style="font-size:22px;font-weight:700;" id="pogDisplay">–</div></div>
+        <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-500);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">EDD</div>
+        <div style="font-size:16px;font-weight:700;color:var(--gray-700);" id="eddDisplay">–</div></div>
+      </div>
+
+      <!-- BASIC DETAILS -->
+      <div class="form-section">
+        <div class="form-section-header" onclick="toggleSection(this)">👤 Basic Details <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body">
+          <div class="form-row"><div class="form-label">Beneficiary Name <span class="req">*</span></div>
+            <input type="text" class="form-input" id="f_name" placeholder="Full name"></div>
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">RCH ID <span class="req">*</span></div>
+              <input type="number" class="form-input" id="f_rch" placeholder="RCH ID" inputmode="numeric"></div>
+            <div class="form-row"><div class="form-label">Phone <span class="req">*</span></div>
+              <input type="tel" class="form-input" id="f_phone" placeholder="10-digit" maxlength="10" inputmode="tel"></div>
+          </div>
+          <div class="form-row"><div class="form-label">Husband's Name</div>
+            <input type="text" class="form-input" id="f_husband" placeholder="Husband's name"></div>
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">Age (years) <span class="req">*</span></div>
+              <input type="number" class="form-input" id="f_age" placeholder="Age" inputmode="numeric" onchange="autoCheckAge()"></div>
+            <div class="form-row"><div class="form-label">LMP <span class="req">*</span></div>
+              <input type="date" class="form-input" id="f_lmp" onchange="calcDates()"></div>
+          </div>
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">EDD (auto)</div>
+              <input type="text" class="form-input auto-calc" id="f_edd" readonly placeholder="Auto-filled"></div>
+            <div class="form-row"><div class="form-label">POG (auto)</div>
+              <input type="text" class="form-input auto-calc" id="f_pog" readonly placeholder="Auto-filled"></div>
+          </div>
+          <div class="form-row"><div class="form-label">Health Facility <span class="req">*</span></div>
+            <select class="form-select" id="f_facility" onchange="checkFacilityOther()">
+              <option value="">Select facility...</option>
+              <option>PHC Palwal</option><option>PHC Aurangabad</option><option>PHC Hassanpur</option>
+              <option>PHC Hodal</option><option>CHC Hathin</option><option>PHC Prithala</option>
+              <option>PHC Dhatir</option><option>PHC Bisru</option><option>PHC Punhana</option>
+              <option>Other (specify)</option>
+            </select></div>
+          <div class="form-row hidden" id="facilityOtherRow">
+            <input type="text" class="form-input" id="f_facility_other" placeholder="Enter facility name"></div>
+        </div>
+      </div>
+
+      <!-- ANTHROPOMETRY -->
+      <div class="form-section">
+        <div class="form-section-header" onclick="toggleSection(this)">📏 Anthropometry <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body">
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">Height (cm)</div>
+              <input type="number" class="form-input" id="f_height" placeholder="cm" step="0.1" inputmode="decimal" onchange="calcBMI()"></div>
+            <div class="form-row"><div class="form-label">Weight (kg) <span class="req">*</span></div>
+              <input type="number" class="form-input" id="f_weight" placeholder="kg" step="0.1" inputmode="decimal" onchange="calcBMI()"></div>
+          </div>
+          <div class="form-row"><div class="form-label">BMI (auto-calculated)</div>
+            <input type="text" class="form-input auto-calc" id="f_bmi" readonly>
+            <div class="form-hint">Normal range: 18.5–24.9 kg/m²</div></div>
+        </div>
+      </div>
+
+      <!-- CURRENT VISIT -->
+      <div class="form-section">
+        <div class="form-section-header" onclick="toggleSection(this)">🏥 Current Visit <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body">
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">Visit No. <span class="req">*</span></div>
+              <input type="number" class="form-input" id="f_visit" placeholder="1" inputmode="numeric" min="1"></div>
+            <div class="form-row"><div class="form-label">Visit Date <span class="req">*</span></div>
+              <input type="date" class="form-input" id="f_visitdate"></div>
+          </div>
+          <div class="form-row"><div class="form-label">Blood Pressure (mm Hg) <span class="req">*</span></div>
+            <div class="two-col">
+              <input type="number" class="form-input" id="f_sbp" placeholder="Systolic" inputmode="numeric" onchange="checkBP()">
+              <input type="number" class="form-input" id="f_dbp" placeholder="Diastolic" inputmode="numeric" onchange="checkBP()">
+            </div>
+            <div class="form-hint">Systolic / Diastolic</div>
+            <div class="reminder-box hidden" id="bpAlert">⚠️ Elevated BP — consider hypertension / pre-eclampsia</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVESTIGATIONS -->
+      <div class="form-section">
+        <div class="form-section-header" onclick="toggleSection(this)">🔬 Investigations <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body">
+          <div class="form-row"><div class="form-label">Haemoglobin (g/dl) <span class="req">*</span></div>
+            <div class="two-col">
+              <input type="number" class="form-input" id="f_hb" placeholder="e.g. 10.5" step="0.1" inputmode="decimal" onchange="checkHb()">
+              <input type="date" class="form-input" id="f_hbdate" title="Date of Hb estimation">
+            </div>
+            <div class="form-hint">Enter Hb value + date of test</div>
+            <div class="reminder-box hidden" id="hbAlert">🚨 Severe Anaemia (Hb &lt;7 g/dl) — Urgent action required!</div>
+            <div class="reminder-box" id="hbReminder" style="background:var(--blue-light);border-color:var(--blue);color:var(--blue);">📋 Hb reminder: Check at registration, 28 weeks &amp; 32–36 weeks POG</div>
+          </div>
+          <!-- Hb history -->
+          <div id="hbHistoryBlock" class="hidden" style="margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">Previous Hb Values</div>
+            <div id="hbHistoryList"></div>
+          </div>
+          <div class="form-divider"></div>
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">Blood Group <span class="req">*</span></div>
+              <select class="form-select" id="f_bg" onchange="checkRh()">
+                <option value="">Select...</option>
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+              </select></div>
+            <div class="form-row"><div class="form-label">HIV <span class="req">*</span></div>
+              <select class="form-select" id="f_hiv" onchange="checkHIV()">
+                <option value="">Select...</option><option>Non-Reactive</option><option>Reactive</option>
+              </select></div>
+          </div>
+          <div class="two-col">
+            <div class="form-row"><div class="form-label">HBsAg <span class="req">*</span></div>
+              <select class="form-select" id="f_hbsag" onchange="checkHBsAg()">
+                <option value="">Select...</option><option>Non-Reactive</option><option>Reactive</option>
+              </select></div>
+            <div class="form-row"><div class="form-label">VDRL <span class="req">*</span></div>
+              <select class="form-select" id="f_vdrl" onchange="checkVDRL()">
+                <option value="">Select...</option><option>Non-Reactive</option><option>Reactive</option>
+              </select></div>
+          </div>
+          <div class="form-row"><div class="form-label">OGTT (mg/dl) <span class="req">*</span></div>
+            <input type="number" class="form-input" id="f_ogtt" placeholder="mg/dl" step="0.1" inputmode="decimal" onchange="checkOGTT()">
+            <div class="reminder-box hidden" id="ogttAlert">⚠️ Abnormal OGTT (≥140 mg/dl) — Consider Gestational Diabetes</div>
+          </div>
+          <div class="form-row"><div class="form-label">Serum TSH (mIU/L) <span class="req">*</span></div>
+            <input type="number" class="form-input" id="f_tsh" placeholder="mIU/L" step="0.01" inputmode="decimal" onchange="checkTSH()">
+            <div class="reminder-box hidden" id="tshAlert">⚠️ Elevated TSH — Check T3 &amp; T4. Consider Hypothyroidism.</div>
+          </div>
+          <div class="form-row"><div class="form-label">Urine R/M <span class="req">*</span></div>
+            <select class="form-select" id="f_urine" onchange="checkUrine()">
+              <option value="">Select...</option>
+              <option>No Abnormality Detected</option>
+              <option>Proteinuria +</option>
+              <option>UTI +</option>
+              <option>Sugars +</option>
+              <option>Others (specify)</option>
+            </select>
+            <input type="text" class="form-input hidden" id="f_urine_other" placeholder="Specify finding..." style="margin-top:6px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- HIGH RISK CONDITIONS -->
+      <div class="form-section">
+        <div class="form-section-header" onclick="toggleSection(this)" style="background:var(--red);">⚠️ High Risk Conditions <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body">
+          <div class="info-box" style="margin-bottom:12px;">🟡 Yellow = auto-detected from your entries. Tap any item to manually select additional conditions.</div>
+          <div class="hrp-grid" id="hrpGrid"></div>
+          <div style="margin-top:10px;">
+            <div class="form-label">Other Risk Factors</div>
+            <input type="text" class="form-input" id="f_other_risk" placeholder="Any other conditions...">
+          </div>
+          <div class="hidden" id="multifetalRow" style="margin-top:10px;">
+            <div class="form-label">Number of Fetuses <span class="req">*</span></div>
+            <input type="number" class="form-input" id="f_fetuses" placeholder="e.g. 2" min="2" max="6" inputmode="numeric">
+          </div>
+          <div class="hidden" id="grandRow" style="margin-top:10px;">
+            <div class="form-label">No. of Previous Deliveries</div>
+            <input type="number" class="form-input" id="f_prev_del" placeholder="e.g. 5" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+
+      <!-- VISIT HISTORY -->
+      <div class="form-section hidden" id="visitHistorySection">
+        <div class="form-section-header" onclick="toggleSection(this)" style="background:var(--gray-700);">📋 Previous Visit History <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body"><div id="visitHistoryList"></div></div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="form-section">
+        <div class="form-section-header" onclick="toggleSection(this)">📝 Notes / Referral <span style="margin-left:auto">▾</span></div>
+        <div class="form-section-body">
+          <textarea class="form-textarea" id="f_notes" rows="3" placeholder="Clinical notes, referral details, counselling given..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-secondary" onclick="goHome()">← Back</button>
+      <button class="btn-danger" id="deliveredBtn" onclick="openDeliveryForm()">👶 Delivered</button>
+      <button class="btn-save" onclick="saveForm()">💾 Save Visit</button>
+    </div>
+  </div>
+
+  <!-- PATIENT LIST SCREEN -->
+  <div id="listScreen" class="screen" style="flex-direction:column;">
+    <div class="search-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="listSearch" placeholder="Search name, RCH ID, PHC..." oninput="filterList()">
+      </div>
+    </div>
+    <div class="nav-tabs" id="listTabs">
+      <div class="nav-tab active" onclick="setListTab('all',this)">All Active</div>
+      <div class="nav-tab" onclick="setListTab('third',this)">3rd Trimester</div>
+      <div class="nav-tab" onclick="setListTab('delivered',this)">Delivered</div>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-chip active" onclick="setFilter('all',this)">All</div>
+      <div class="filter-chip" onclick="setFilter('36w',this)">36+ wks 🔴</div>
+      <div class="filter-chip" onclick="setFilter('28w',this)">28–35 wks 🟡</div>
+      <div class="filter-chip" onclick="setFilter('hiv',this)">HIV+</div>
+      <div class="filter-chip" onclick="setFilter('dm',this)">Diabetes</div>
+      <div class="filter-chip" onclick="setFilter('htn',this)">Hypertension</div>
+      <div class="filter-chip" onclick="setFilter('anaemia',this)">Anaemia</div>
+    </div>
+    <div class="patient-list" id="patientListContainer" style="padding-top:8px;"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="showTab('home')"><span class="nav-icon">🏠</span>Home</div>
+    <div class="nav-item" id="nav-new" onclick="showTab('new')"><span class="nav-icon">➕</span>New</div>
+    <div class="nav-item" id="nav-list" onclick="showTab('list')"><span class="nav-icon">📋</span>Patients</div>
+    <div class="nav-item" id="nav-search" onclick="showTab('search')"><span class="nav-icon">🔍</span>Search</div>
+  </div>
+</div>
+
+<!-- DELIVERY OVERLAY -->
+<div class="overlay" id="deliveryOverlay">
+  <div class="overlay-card">
+    <div class="overlay-header"><h2>👶 Record Delivery</h2><button class="close-btn" onclick="closeDeliveryForm()">✕</button></div>
+    <div class="overlay-body">
+      <div class="form-row"><div class="form-label">Date of Delivery <span class="req">*</span></div>
+        <input type="date" class="form-input" id="d_date"></div>
+      <div class="form-row"><div class="form-label">Type of Delivery <span class="req">*</span></div>
+        <select class="form-select" id="d_type">
+          <option value="">Select...</option>
+          <option>Normal Vaginal Delivery</option>
+          <option>C-Section (LSCS)</option>
+          <option>Instrumental (Forceps/Vacuum)</option>
+        </select></div>
+      <div class="form-row"><div class="form-label">Status of Mother <span class="req">*</span></div>
+        <select class="form-select" id="d_mom_status">
+          <option value="">Select...</option>
+          <option>Admitted</option><option>Discharged</option><option>Died</option>
+        </select></div>
+      <div id="babySlots"></div>
+      <button onclick="addBabySlot()" style="background:var(--teal-xlight);border:1.5px solid var(--teal);color:var(--teal-dark);padding:10px 16px;border-radius:8px;font-family:var(--font);font-weight:600;margin-bottom:14px;cursor:pointer;width:100%;">+ Add Baby Slot</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-secondary" onclick="closeDeliveryForm()">Cancel</button>
+        <button class="btn-save" onclick="saveDelivery()">Save Delivery</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUERY OVERLAY -->
+<div class="overlay" id="queryOverlay">
+  <div class="overlay-card">
+    <div class="overlay-header" style="background:var(--teal);"><h2>📨 Send Query to Supervisor</h2><button class="close-btn" onclick="closeQueryModal()">✕</button></div>
+    <div class="overlay-body">
+      <div class="form-row"><div class="form-label">Your Name / Designation</div>
+        <input type="text" class="form-input" id="q_sender" placeholder="e.g. Staff Nurse Rekha, PHC Hodal"></div>
+      <div class="form-row"><div class="form-label">Subject</div>
+        <input type="text" class="form-input" id="q_subject" placeholder="Brief subject..."></div>
+      <div class="form-row"><div class="form-label">Message</div>
+        <textarea class="form-textarea" id="q_body" rows="5" placeholder="Describe your query..."></textarea></div>
+      <div class="reminder-box" style="background:var(--teal-xlight);border-color:var(--teal);color:var(--teal-dark);margin-bottom:12px;">📧 Will be sent to: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85f1ece9eaf5e4e6ede4eef7e4e7eaf7f1fcc5e2e8e4ece9abe6eae8">[email&#160;protected]</a></div>
+      <div class="query-sent" id="querySent">✅ Query sent successfully!</div>
+      <button class="btn-save" style="width:100%;" onclick="sendQuery()">Send Query</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const CRED = {user:'HRP_palwal', pass:'HRP123400Palwal'};
+let patients = JSON.parse(localStorage.getItem('hrp_patients')||'[]');
+let currentPatientId = null;
+let listTabCurrent = 'all';
+let listFilterCurrent = 'all';
+let babySlotCount = 0;
+let hrpSelected = new Set();
+let hrpAutoSelected = new Set();
+
+const HRP_CONDITIONS = [
+  {id:'age_low',    label:'Age < 18 years',                  auto:true},
+  {id:'age_high',   label:'Age > 35 years',                   auto:true},
+  {id:'height_low', label:'Height < 145 cm',                  auto:true},
+  {id:'weight_low', label:'Weight at registration < 35 kg',   auto:true},
+  {id:'obese',      label:'Obesity (BMI > 25 kg/m²)',         auto:true},
+  {id:'multifetal', label:'Multifetal Pregnancy',             auto:false},
+  {id:'rh_neg',     label:'Rh Negative Pregnancy',            auto:true},
+  {id:'iugr',       label:'IUGR',                            auto:false},
+  {id:'hypothyroid',label:'Hypothyroidism',                   auto:true},
+  {id:'sev_anaemia',label:'Severe Anaemia (Hb < 7 g/dl)',    auto:true},
+  {id:'gdm',        label:'Gestational Diabetes',             auto:false},
+  {id:'overt_dm',   label:'Overt Diabetes',                  auto:false},
+  {id:'gh',         label:'Gestational Hypertension',        auto:false},
+  {id:'preeclampsia',label:'Pre-Eclampsia',                   auto:false},
+  {id:'eclampsia',  label:'Eclampsia',                       auto:false},
+  {id:'pp',         label:'Placenta Previa',                 auto:false},
+  {id:'abruptio',   label:'Abruptio Placentae',              auto:false},
+  {id:'boh',        label:'Bad Obstetric History',           auto:false},
+  {id:'rpl',        label:'Recurrent Pregnancy Loss',        auto:false},
+  {id:'tb',         label:'Tuberculosis (TB)',               auto:false},
+  {id:'hiv_pos',    label:'HIV Positive',                    auto:true},
+  {id:'hbsag_pos',  label:'HBsAg Positive',                  auto:true},
+  {id:'hcv_pos',    label:'HCV Positive',                   auto:false},
+  {id:'vdrl_pos',   label:'VDRL Positive',                   auto:true},
+  {id:'prev_lscs',  label:'Previous LSCS',                   auto:false},
+  {id:'grand_multi',label:'Grand Multipara (>5 deliveries)', auto:false},
+  {id:'preterm',    label:'Preterm Labour',                  auto:false},
+];
+
+// INIT
+window.onload = () => {
+  const d = new Date();
+  document.getElementById('todayDate').textContent = d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('f_visitdate').value = todayStr();
+  buildHRPGrid();
+  updateStats();
+  renderAlerts();
+};
+
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function savePatients(){localStorage.setItem('hrp_patients',JSON.stringify(patients));}
+
+// AUTH
+function doLogin(){
+  if(document.getElementById('loginUser').value.trim()===CRED.user &&
+     document.getElementById('loginPass').value.trim()===CRED.pass){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='flex';
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+function doLogout(){
+  if(confirm('Sign out?')){
+    document.getElementById('app').style.display='none';
+    document.getElementById('loginScreen').style.display='flex';
+    document.getElementById('loginPass').value='';
+  }
+}
+
+// NAVIGATION
+function showTab(tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(tab==='home'){
+    document.getElementById('homeScreen').classList.add('active');
+    document.getElementById('nav-home').classList.add('active');
+    document.getElementById('topbarTitle').textContent='HRP Portal';
+    updateStats(); renderAlerts();
+  } else if(tab==='new'){
+    resetForm(); currentPatientId=null;
+    document.getElementById('formScreen').classList.add('active');
+    document.getElementById('nav-new').classList.add('active');
+    document.getElementById('topbarTitle').textContent='New Beneficiary';
+  } else if(tab==='list'){
+    document.getElementById('listScreen').classList.add('active');
+    document.getElementById('nav-list').classList.add('active');
+    document.getElementById('topbarTitle').textContent='All Patients';
+    renderPatientList();
+  } else if(tab==='search'){
+    document.getElementById('searchScreen').classList.add('active');
+    document.getElementById('nav-search').classList.add('active');
+    document.getElementById('topbarTitle').textContent='Find Patient';
+  }
+}
+function goHome(){showTab('home');}
+function goNew(){showTab('new');}
+function goRegistered(){showTab('search');}
+
+// SECTION TOGGLE
+function toggleSection(header){
+  const body = header.nextElementSibling;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+}
+
+// HRP GRID
+function buildHRPGrid(){
+  const g = document.getElementById('hrpGrid');
+  g.innerHTML='';
+  HRP_CONDITIONS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='hrp-item'; d.id='hrp_'+c.id;
+    d.innerHTML=`<div class="hrp-check">✓</div><div class="hrp-label">${c.label}</div>${c.auto?'<div class="hrp-badge">AUTO</div>':''}`;
+    d.onclick=()=>toggleHRP(c.id,c.auto);
+    g.appendChild(d);
+  });
+}
+function toggleHRP(id, auto){
+  if(auto && hrpAutoSelected.has(id)) return;
+  const el=document.getElementById('hrp_'+id);
+  if(hrpSelected.has(id)){hrpSelected.delete(id); el.classList.remove('selected');}
+  else{hrpSelected.add(id); el.classList.add('selected');}
+  document.getElementById('multifetalRow').classList.toggle('hidden',!hrpSelected.has('multifetal'));
+  document.getElementById('grandRow').classList.toggle('hidden',!hrpSelected.has('grand_multi'));
+}
+function setHRPAuto(id,val){
+  const el=document.getElementById('hrp_'+id); if(!el) return;
+  if(val){
+    hrpAutoSelected.add(id); hrpSelected.add(id);
+    el.classList.add('auto-selected'); el.classList.remove('selected');
+  } else {
+    hrpAutoSelected.delete(id);
+    el.classList.remove('auto-selected');
+    if(!hrpSelected.has(id)) el.classList.remove('selected');
+  }
+}
+
+// DATE CALC
+function calcDates(){
+  const lmp=document.getElementById('f_lmp').value; if(!lmp) return;
+  const lmpD=new Date(lmp);
+  const edd=new Date(lmpD.getTime()+280*86400000);
+  document.getElementById('f_edd').value=edd.toLocaleDateString('en-IN');
+  updatePOG();
+}
+function calcPOG(lmpStr){
+  if(!lmpStr) return null;
+  const diff=Math.floor((new Date()-new Date(lmpStr))/86400000);
+  if(diff<0) return null;
+  return {weeks:Math.floor(diff/7), days:diff%7, total:diff};
+}
+function updatePOG(){
+  const lmp=document.getElementById('f_lmp').value;
+  const pog=calcPOG(lmp); if(!pog){document.getElementById('f_pog').value=''; return;}
+  const str=`${pog.weeks}w ${pog.days}d`;
+  document.getElementById('f_pog').value=str;
+  document.getElementById('pogBanner').classList.remove('hidden');
+  const disp=document.getElementById('pogDisplay');
+  disp.textContent=str;
+  if(pog.weeks>=36){disp.style.color='var(--red)';}
+  else if(pog.weeks>=28){disp.style.color='var(--amber)';}
+  else{disp.style.color='var(--teal)';}
+  const lmpD=new Date(lmp);
+  const edd=new Date(lmpD.getTime()+280*86400000);
+  document.getElementById('eddDisplay').textContent=edd.toLocaleDateString('en-IN');
+  checkTSH();
+}
+
+// CALC CHECKS
+function calcBMI(){
+  const h=parseFloat(document.getElementById('f_height').value);
+  const w=parseFloat(document.getElementById('f_weight').value);
+  if(h>0&&w>0){
+    const bmi=(w/((h/100)**2)).toFixed(1);
+    document.getElementById('f_bmi').value=bmi+' kg/m²';
+    setHRPAuto('obese',parseFloat(bmi)>25);
+  }
+  const wv=parseFloat(document.getElementById('f_weight').value);
+  setHRPAuto('weight_low',wv>0&&wv<35);
+  const hv=parseFloat(document.getElementById('f_height').value);
+  setHRPAuto('height_low',hv>0&&hv<145);
+}
+function autoCheckAge(){
+  const age=parseInt(document.getElementById('f_age').value);
+  if(!isNaN(age)){setHRPAuto('age_low',age<18); setHRPAuto('age_high',age>35);}
+}
+function checkHb(){
+  const hb=parseFloat(document.getElementById('f_hb').value);
+  document.getElementById('hbAlert').classList.toggle('hidden',!(hb>0&&hb<7));
+  setHRPAuto('sev_anaemia',hb>0&&hb<7);
+}
+function checkBP(){
+  const s=parseInt(document.getElementById('f_sbp').value);
+  const d=parseInt(document.getElementById('f_dbp').value);
+  document.getElementById('bpAlert').classList.toggle('hidden',!(s>=140||d>=90));
+}
+function checkRh(){setHRPAuto('rh_neg',document.getElementById('f_bg').value.includes('-'));}
+function checkHIV(){setHRPAuto('hiv_pos',document.getElementById('f_hiv').value==='Reactive');}
+function checkHBsAg(){setHRPAuto('hbsag_pos',document.getElementById('f_hbsag').value==='Reactive');}
+function checkVDRL(){setHRPAuto('vdrl_pos',document.getElementById('f_vdrl').value==='Reactive');}
+function checkTSH(){
+  const tsh=parseFloat(document.getElementById('f_tsh').value);
+  const lmp=document.getElementById('f_lmp').value;
+  const pog=calcPOG(lmp);
+  if(isNaN(tsh)){document.getElementById('tshAlert').classList.add('hidden'); return;}
+  const thresh=pog&&pog.weeks<14?2.5:3.0;
+  const elevated=tsh>thresh;
+  document.getElementById('tshAlert').classList.toggle('hidden',!elevated);
+  setHRPAuto('hypothyroid',elevated);
+}
+function checkOGTT(){
+  const v=parseFloat(document.getElementById('f_ogtt').value);
+  document.getElementById('ogttAlert').classList.toggle('hidden',!(v>=140));
+}
+function checkUrine(){
+  const v=document.getElementById('f_urine').value;
+  document.getElementById('f_urine_other').classList.toggle('hidden',v!=='Others (specify)');
+}
+function checkFacilityOther(){
+  document.getElementById('facilityOtherRow').classList.toggle('hidden',
+    document.getElementById('f_facility').value!=='Other (specify)');
+}
+
+// RESET FORM
+function resetForm(){
+  hrpSelected=new Set(); hrpAutoSelected=new Set();
+  ['f_name','f_rch','f_phone','f_husband','f_age','f_lmp','f_edd','f_pog',
+   'f_height','f_weight','f_bmi','f_visit','f_sbp','f_dbp','f_hb','f_hbdate',
+   'f_ogtt','f_tsh','f_notes','f_other_risk','f_fetuses','f_prev_del'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['f_bg','f_hiv','f_hbsag','f_vdrl','f_urine','f_facility'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('f_visitdate').value=todayStr();
+  document.getElementById('pogBanner').classList.add('hidden');
+  document.getElementById('visitHistorySection').classList.add('hidden');
+  document.getElementById('hbHistoryBlock').classList.add('hidden');
+  ['hbAlert','bpAlert','tshAlert','ogttAlert'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  ['multifetalRow','grandRow','facilityOtherRow'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  buildHRPGrid();
+}
+
+// LOAD PATIENT
+function loadPatient(id){
+  const p=patients.find(x=>x.id===id); if(!p) return;
+  currentPatientId=id; resetForm();
+  ['f_name','f_rch','f_phone','f_husband','f_age','f_lmp','f_height','f_other_risk'].forEach(field=>{
+    const el=document.getElementById(field); if(el&&p[field.replace('f_','')]) el.value=p[field.replace('f_','')];
+  });
+  document.getElementById('f_name').value=p.name||'';
+  document.getElementById('f_rch').value=p.rch||'';
+  document.getElementById('f_phone').value=p.phone||'';
+  document.getElementById('f_husband').value=p.husband||'';
+  document.getElementById('f_age').value=p.age||'';
+  document.getElementById('f_lmp').value=p.lmp||'';
+  document.getElementById('f_facility').value=p.facility||'';
+  document.getElementById('f_height').value=p.height||'';
+  document.getElementById('f_bg').value=p.bg||'';
+  document.getElementById('f_other_risk').value=p.other_risk||'';
+  // set next visit number
+  const lastV=p.visits&&p.visits.length?p.visits[p.visits.length-1]:null;
+  document.getElementById('f_visit').value=lastV?parseInt(lastV.visit_no||1)+1:1;
+  if(lastV){
+    document.getElementById('f_hiv').value=p.hiv||lastV.hiv||'';
+    document.getElementById('f_hbsag').value=p.hbsag||lastV.hbsag||'';
+    document.getElementById('f_vdrl').value=p.vdrl||lastV.vdrl||'';
+  }
+  // HRP
+  hrpSelected=new Set(p.hrp||[]);
+  hrpAutoSelected=new Set(p.hrp_auto||[]);
+  HRP_CONDITIONS.forEach(c=>{
+    const el=document.getElementById('hrp_'+c.id); if(!el) return;
+    if(hrpAutoSelected.has(c.id)) el.classList.add('auto-selected');
+    else if(hrpSelected.has(c.id)) el.classList.add('selected');
+  });
+  if(hrpSelected.has('multifetal')) document.getElementById('multifetalRow').classList.remove('hidden');
+  if(hrpSelected.has('grand_multi')) document.getElementById('grandRow').classList.remove('hidden');
+  // Hb history
+  if(p.hb_history&&p.hb_history.length){
+    document.getElementById('hbHistoryBlock').classList.remove('hidden');
+    document.getElementById('hbHistoryList').innerHTML=p.hb_history.map(h=>{
+      const cls=h.val<7?'severe':h.val<10?'mild':'normal';
+      return `<div class="hb-row"><span style="color:var(--gray-500)">${h.date}</span><span class="hb-val ${cls}">${h.val} g/dl</span></div>`;
+    }).join('');
+  }
+  // Visit history
+  if(p.visits&&p.visits.length){
+    document.getElementById('visitHistorySection').classList.remove('hidden');
+    document.getElementById('visitHistoryList').innerHTML=p.visits.map((v,i)=>`
+      <div class="visit-card">
+        <div class="visit-header" onclick="this.nextElementSibling.classList.toggle('open')">
+          <span class="visit-title">Visit ${v.visit_no||i+1}</span>
+          <span class="visit-date">${v.date||''} · ${v.pog||''}</span>
+        </div>
+        <div class="visit-body">
+          ${v.weight?`<div class="visit-row"><span class="visit-key">Weight</span><span class="visit-val">${v.weight} kg</span></div>`:''}
+          ${v.sbp?`<div class="visit-row"><span class="visit-key">BP</span><span class="visit-val">${v.sbp}/${v.dbp} mmHg</span></div>`:''}
+          ${v.hb?`<div class="visit-row"><span class="visit-key">Hb</span><span class="visit-val">${v.hb} g/dl (${v.hbdate||''})</span></div>`:''}
+          ${v.ogtt?`<div class="visit-row"><span class="visit-key">OGTT</span><span class="visit-val">${v.ogtt} mg/dl</span></div>`:''}
+          ${v.tsh?`<div class="visit-row"><span class="visit-key">TSH</span><span class="visit-val">${v.tsh} mIU/L</span></div>`:''}
+          ${v.notes?`<div class="visit-row"><span class="visit-key">Notes</span><span class="visit-val">${v.notes}</span></div>`:''}
+        </div>
+      </div>`).join('');
+  }
+  calcDates(); calcBMI(); checkRh(); checkHIV(); checkHBsAg(); checkVDRL();
+  showTab('form');
+  document.getElementById('formScreen').classList.add('active');
+  document.getElementById('topbarTitle').textContent=p.name;
+}
+
+// SAVE FORM
+function saveForm(){
+  const required=[
+    ['f_name','Beneficiary Name'],['f_rch','RCH ID'],['f_phone','Phone Number'],
+    ['f_age','Age'],['f_lmp','LMP'],['f_visit','Visit Number'],
+    ['f_visitdate','Visit Date'],['f_facility','Health Facility'],
+    ['f_weight','Weight'],['f_sbp','Systolic BP'],['f_dbp','Diastolic BP'],
+    ['f_hb','Haemoglobin'],['f_hbdate','Date of Hb test'],['f_bg','Blood Group'],
+    ['f_hiv','HIV'],['f_hbsag','HBsAg'],['f_vdrl','VDRL'],
+    ['f_ogtt','OGTT'],['f_tsh','Serum TSH'],['f_urine','Urine R/M'],
+  ];
+  for(const [id,lbl] of required){
+    const el=document.getElementById(id);
+    if(!el||!el.value.trim()){
+      showToast('⚠️ Please fill: '+lbl);
+      el&&el.focus(); el&&el.classList.add('error');
+      setTimeout(()=>el&&el.classList.remove('error'),2500);
+      return;
+    }
+  }
+  const lmp=document.getElementById('f_lmp').value;
+  const pog=calcPOG(lmp);
+  const visitData={
+    visit_no:document.getElementById('f_visit').value,
+    date:document.getElementById('f_visitdate').value,
+    pog:pog?`${pog.weeks}w${pog.days}d`:'',
+    weight:document.getElementById('f_weight').value,
+    sbp:document.getElementById('f_sbp').value,
+    dbp:document.getElementById('f_dbp').value,
+    hb:document.getElementById('f_hb').value,
+    hbdate:document.getElementById('f_hbdate').value,
+    hiv:document.getElementById('f_hiv').value,
+    hbsag:document.getElementById('f_hbsag').value,
+    vdrl:document.getElementById('f_vdrl').value,
+    ogtt:document.getElementById('f_ogtt').value,
+    tsh:document.getElementById('f_tsh').value,
+    urine:document.getElementById('f_urine').value,
+    urine_other:document.getElementById('f_urine_other').value,
+    notes:document.getElementById('f_notes').value,
+  };
+  if(currentPatientId){
+    const p=patients.find(x=>x.id===currentPatientId);
+    if(p){
+      p.visits=p.visits||[];
+      p.visits.push(visitData);
+      p.hb_history=p.hb_history||[];
+      if(visitData.hb) p.hb_history.push({val:parseFloat(visitData.hb),date:visitData.hbdate});
+      p.hrp=[...hrpSelected]; p.hrp_auto=[...hrpAutoSelected];
+      p.last_updated=todayStr();
+    }
+  } else {
+    const fac=document.getElementById('f_facility').value;
+    const np={
+      id:'P'+Date.now(),
+      name:document.getElementById('f_name').value.trim(),
+      rch:document.getElementById('f_rch').value,
+      phone:document.getElementById('f_phone').value,
+      husband:document.getElementById('f_husband').value,
+      age:document.getElementById('f_age').value,
+      lmp:lmp,
+      facility:fac==='Other (specify)'?document.getElementById('f_facility_other').value:fac,
+      height:document.getElementById('f_height').value,
+      bg:document.getElementById('f_bg').value,
+      hiv:document.getElementById('f_hiv').value,
+      hbsag:document.getElementById('f_hbsag').value,
+      other_risk:document.getElementById('f_other_risk').value,
+      fetuses:document.getElementById('f_fetuses').value||1,
+      prev_del:document.getElementById('f_prev_del').value,
+      hrp:[...hrpSelected],
+      hrp_auto:[...hrpAutoSelected],
+      visits:[visitData],
+      hb_history:visitData.hb?[{val:parseFloat(visitData.hb),date:visitData.hbdate}]:[],
+      delivered:false,
+      created:todayStr(),
+      last_updated:todayStr(),
+    };
+    patients.push(np);
+    currentPatientId=np.id;
+  }
+  savePatients(); showToast('✅ Visit saved!'); updateStats();
+}
+
+// DELIVERY
+function openDeliveryForm(){
+  if(!currentPatientId){showToast('Save basic details first'); return;}
+  babySlotCount=0;
+  document.getElementById('babySlots').innerHTML='';
+  document.getElementById('d_date').value=todayStr();
+  addBabySlot();
+  document.getElementById('deliveryOverlay').classList.add('open');
+}
+function closeDeliveryForm(){document.getElementById('deliveryOverlay').classList.remove('open');}
+function addBabySlot(){
+  babySlotCount++;
+  const i=babySlotCount;
+  const d=document.createElement('div');
+  d.className='baby-slot';
+  d.innerHTML=`<div class="baby-slot-title">🍼 Baby ${i}</div>
+    <div class="two-col">
+      <div class="form-row"><div class="form-label">Birth Outcome</div>
+        <select class="form-select" id="b${i}_outcome"><option>Live Birth</option><option>Still Birth</option></select></div>
+      <div class="form-row"><div class="form-label">Sex</div>
+        <select class="form-select" id="b${i}_sex"><option>Female</option><option>Male</option></select></div>
+    </div>
+    <div class="form-row"><div class="form-label">Birth Weight (kg)</div>
+      <input type="number" class="form-input" id="b${i}_wt" placeholder="e.g. 2.8" step="0.1" inputmode="decimal"></div>
+    <div class="form-row"><div class="form-label">Baby Status</div>
+      <select class="form-select" id="b${i}_status">
+        <option>Healthy at Birth</option>
+        <option>Resuscitated at Birth and Healthy</option>
+        <option>Admitted</option><option>Discharged</option><option>Died</option>
+      </select></div>`;
+  document.getElementById('babySlots').appendChild(d);
+}
+function saveDelivery(){
+  const date=document.getElementById('d_date').value;
+  const type=document.getElementById('d_type').value;
+  const mom=document.getElementById('d_mom_status').value;
+  if(!date||!type||!mom){showToast('Please fill all delivery fields'); return;}
+  const babies=[];
+  for(let i=1;i<=babySlotCount;i++){
+    babies.push({
+      outcome:document.getElementById('b'+i+'_outcome').value,
+      sex:document.getElementById('b'+i+'_sex').value,
+      weight:document.getElementById('b'+i+'_wt').value,
+      status:document.getElementById('b'+i+'_status').value,
+    });
+  }
+  const p=patients.find(x=>x.id===currentPatientId);
+  if(p){p.delivered=true; p.delivery={date,type,mom_status:mom,babies}; p.last_updated=todayStr();}
+  savePatients(); closeDeliveryForm(); showToast('👶 Delivery recorded!'); updateStats(); goHome();
+}
+
+// PATIENT LIST
+function renderPatientList(){
+  const container=document.getElementById('patientListContainer');
+  let list=patients.filter(p=>{
+    if(listTabCurrent==='delivered') return p.delivered;
+    if(listTabCurrent==='third') return !p.delivered&&getWeeks(p.lmp)>=28;
+    return !p.delivered;
+  });
+  if(listFilterCurrent==='36w') list=list.filter(p=>getWeeks(p.lmp)>=36);
+  else if(listFilterCurrent==='28w') list=list.filter(p=>getWeeks(p.lmp)>=28&&getWeeks(p.lmp)<36);
+  else if(listFilterCurrent==='hiv') list=list.filter(p=>(p.hrp||[]).includes('hiv_pos'));
+  else if(listFilterCurrent==='dm') list=list.filter(p=>(p.hrp||[]).includes('gdm')||(p.hrp||[]).includes('overt_dm'));
+  else if(listFilterCurrent==='htn') list=list.filter(p=>(p.hrp||[]).includes('gh')||(p.hrp||[]).includes('preeclampsia')||(p.hrp||[]).includes('eclampsia'));
+  else if(listFilterCurrent==='anaemia') list=list.filter(p=>(p.hrp||[]).includes('sev_anaemia'));
+  const q=(document.getElementById('listSearch').value||'').toLowerCase();
+  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q)||String(p.rch).includes(q)||(p.facility||'').toLowerCase().includes(q));
+  container.innerHTML=list.length?list.map(patientCardHTML).join(''):'<div style="text-align:center;padding:40px;color:var(--gray-400);">No patients found</div>';
+}
+function getWeeks(lmp){const p=calcPOG(lmp); return p?p.weeks:0;}
+function patientCardHTML(p){
+  const wks=getWeeks(p.lmp);
+  const cls=p.delivered?'normal':wks>=36?'red':wks>=28?'yellow':'normal';
+  const pogStr=p.delivered?'✅ Delivered':`POG: ${wks}w`;
+  const tagHRPs=(p.hrp||[]).slice(0,3).map(id=>{
+    const c=HRP_CONDITIONS.find(x=>x.id===id);
+    return c?`<span class="tag tag-red">${c.label.split('(')[0].trim().substring(0,20)}</span>`:'';
+  }).join('');
+  const lastV=p.visits&&p.visits.length?p.visits[p.visits.length-1]:null;
+  return `<div class="patient-card ${cls}" onclick="loadPatient('${p.id}')">
+    <div style="flex:1;min-width:0;">
+      <div class="pc-name">${p.name}</div>
+      <div class="pc-rch">RCH: ${p.rch} · ${p.facility||'–'}</div>
+      <div class="pc-details">${pogStr} · Age ${p.age}y · 📞 ${p.phone}</div>
+      ${lastV?`<div class="pc-details" style="margin-top:2px;">Last visit: ${lastV.date||'–'} · BP: ${lastV.sbp||'–'}/${lastV.dbp||'–'} · Hb: ${lastV.hb||'–'}</div>`:''}
+      <div class="pc-tags">${tagHRPs}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0;margin-left:8px;">
+      <span class="pog-badge ${cls==='red'?'pog-red':cls==='yellow'?'pog-yellow':'pog-normal'}">${wks}w</span>
+    </div>
+  </div>`;
+}
+function setListTab(tab,el){
+  listTabCurrent=tab;
+  document.querySelectorAll('#listTabs .nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active'); renderPatientList();
+}
+function setFilter(f,el){
+  listFilterCurrent=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); renderPatientList();
+}
+function filterList(){renderPatientList();}
+
+// SEARCH
+function loadByRCH(){
+  const rch=document.getElementById('rchSearch').value.trim();
+  if(!rch){showToast('Enter RCH ID'); return;}
+  const p=patients.find(x=>String(x.rch)===String(rch));
+  if(p) loadPatient(p.id);
+  else showToast('No patient found with RCH ID: '+rch);
+}
+function searchPatients(){
+  const q=(document.getElementById('nameSearch').value||'').toLowerCase();
+  const c=document.getElementById('searchResults');
+  if(!q){c.innerHTML=''; return;}
+  const list=patients.filter(p=>p.name.toLowerCase().includes(q)||String(p.rch).includes(q));
+  c.innerHTML=list.length?list.map(patientCardHTML).join(''):'<div style="padding:16px;color:var(--gray-400);">No results</div>';
+}
+
+// STATS & ALERTS
+function updateStats(){
+  const active=patients.filter(p=>!p.delivered);
+  document.getElementById('statTotal').textContent=active.length;
+  document.getElementById('statThird').textContent=active.filter(p=>getWeeks(p.lmp)>=28).length;
+  document.getElementById('statDeliv').textContent=patients.filter(p=>p.delivered).length;
+}
+function renderAlerts(){
+  const container=document.getElementById('alertsList');
+  const alerts=[];
+  patients.filter(p=>!p.delivered).forEach(p=>{
+    const wks=getWeeks(p.lmp);
+    if(wks>=36) alerts.push({cls:'red',name:p.name,detail:`${wks} weeks — Near term. POG ≥36 weeks.`,id:p.id});
+    else if(wks>=28) alerts.push({cls:'amber',name:p.name,detail:`${wks} weeks — Third trimester started.`,id:p.id});
+    if((p.hrp||[]).includes('sev_anaemia')) alerts.push({cls:'red',name:p.name,detail:'Severe anaemia — Urgent follow-up',id:p.id});
+    if((p.hrp||[]).includes('preeclampsia')||(p.hrp||[]).includes('eclampsia')) alerts.push({cls:'red',name:p.name,detail:'Pre-eclampsia/Eclampsia — High priority',id:p.id});
+  });
+  if(!alerts.length){container.innerHTML='<div style="font-size:13px;color:var(--gray-400);text-align:center;padding:12px;">No urgent alerts 👍</div>'; return;}
+  container.innerHTML=alerts.slice(0,8).map(a=>`
+    <div class="alert-item" onclick="loadPatient('${a.id}')">
+      <div class="alert-dot ${a.cls}"></div>
+      <div><div class="alert-name">${a.name}</div><div class="alert-detail">${a.detail}</div></div>
+    </div>`).join('');
+}
+
+// QUERY
+function openQueryModal(){document.getElementById('queryOverlay').classList.add('open');}
+function closeQueryModal(){document.getElementById('queryOverlay').classList.remove('open');}
+function sendQuery(){
+  const sender=document.getElementById('q_sender').value.trim();
+  const subj=document.getElementById('q_subject').value.trim();
+  const body=document.getElementById('q_body').value.trim();
+  if(!body){showToast('Please write your query'); return;}
+  const mailto=`mailto:tilopachakraborty@gmail.com?subject=${encodeURIComponent('HRP Portal Query: '+subj)}&body=${encodeURIComponent('From: '+sender+'\n\n'+body)}`;
+  window.open(mailto,'_blank');
+  document.getElementById('querySent').style.display='block';
+  setTimeout(()=>{closeQueryModal(); document.getElementById('querySent').style.display='none'; document.getElementById('q_body').value='';},2000);
+}
+
+// EXPORT CSV
+function exportToCSV(){
+  if(!patients.length){showToast('No data to export'); return;}
+  const headers=['Name','RCH_ID','Age','Phone','Husband','Facility','LMP','EDD','Height_cm',
+    'Blood_Group','HIV','HBsAg','HRP_Conditions','Other_Risk','Delivered',
+    'Delivery_Date','Delivery_Type','Mother_Status',
+    'Visit_No','Visit_Date','POG','Weight_kg','BP_Systolic','BP_Diastolic',
+    'Hb_gdl','Hb_Date','OGTT_mgdl','TSH_mIUL','Urine_RM','Notes'];
+  const rows=[headers.join(',')];
+  patients.forEach(p=>{
+    const hrpStr=(p.hrp||[]).map(id=>{const c=HRP_CONDITIONS.find(x=>x.id===id); return c?c.label:'';}).filter(Boolean).join('; ');
+    const lastV=p.visits&&p.visits.length?p.visits[p.visits.length-1]:null;
+    const del=p.delivery||{};
+    const edd=p.lmp?new Date(new Date(p.lmp).getTime()+280*86400000).toLocaleDateString('en-IN'):'';
+    const row=[
+      `"${p.name||''}"`,p.rch||'',p.age||'',p.phone||'',`"${p.husband||''}"`,`"${p.facility||''}"`,
+      p.lmp||'',edd,p.height||'',p.bg||'',p.hiv||'',p.hbsag||'',
+      `"${hrpStr}"`,`"${p.other_risk||''}"`,p.delivered?'Yes':'No',
+      del.date||'',`"${del.type||''}"`,del.mom_status||'',
+      lastV?lastV.visit_no||'':'',lastV?lastV.date||'':'',lastV?lastV.pog||'':'',
+      lastV?lastV.weight||'':'',lastV?lastV.sbp||'':'',lastV?lastV.dbp||'':'',
+      lastV?lastV.hb||'':'',lastV?lastV.hbdate||'':'',lastV?lastV.ogtt||'':'',
+      lastV?lastV.tsh||'':'',lastV?`"${lastV.urine||''}"`:'',(lastV?`"${lastV.notes||''}"`:'"" '),
+    ];
+    rows.push(row.join(','));
+  });
+  const csv=rows.join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='HRP_Palwal_'+todayStr()+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('📊 CSV exported! I
