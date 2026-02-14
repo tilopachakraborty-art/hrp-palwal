@@ -1,11 +1,4 @@
-name: Build APK
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
+build:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,11 +11,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build Debug APK
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: assembleDebug
-          build-root-directory: .
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
